@@ -1,0 +1,25 @@
+name: Create Caddy Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      working-directory: ./caddy
+      run: docker build . --file Dockerfile --tag mrfelix/caddy:latest
+    - name: Docker Login
+      uses: docker/login-action@v2.0.0
+      with:
+        username: mrfelix
+        password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+    - name: Push the Docker image
+      run: docker push mrfelix/caddy:latest
